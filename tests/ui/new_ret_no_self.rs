@@ -1,3 +1,4 @@
+#![feature(type_alias_impl_trait)]
 #![warn(clippy::new_ret_no_self)]
 #![allow(dead_code)]
 
@@ -397,6 +398,29 @@ mod issue7344 {
         // should not trigger lint
         fn new<'b: 'a>(s: &'b str) -> impl Into<RetImplTraitSelfAdt<'b>> {
             RetImplTraitSelfAdt(s)
+        }
+    }
+}
+
+mod issue10041 {
+    struct Bomb;
+
+    impl Bomb {
+        // Hidden <Rhs = Self> default generic paramter.
+        pub fn explode(&self) -> impl PartialOrd {
+            0i32
+        }
+    }
+}
+
+mod issue10041_tait {
+    type X = impl std::ops::Add<Output = X>;
+
+    struct Foo;
+
+    impl Foo {
+        fn new() -> X {
+            1
         }
     }
 }
